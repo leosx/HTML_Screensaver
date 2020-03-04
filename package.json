@@ -1,0 +1,49 @@
+{
+  "name": "sx",
+  "version": "1.0.0",
+  "description": "HTML屏幕保护程序",
+  "main": "entry.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "屏保",
+    "屏幕保护程序"
+  ],
+  "author": "sx",
+  "license": "MIT",
+  "dependencies": {
+    "log4js": "^6.1.2"
+  },
+  "devDependencies": {
+    "electron": "^8.0.2",
+    "electron-builder": "^22.3.2",
+    "gulp": "^4.0.2"
+  },
+  "build": {
+    "electronDownload": {
+      "mirror": "https://npm.taobao.org/mirrors/electron/"
+    },
+    "productName": "HTML屏保",
+    "appId": "leosxgy",
+    "copyright": "©2019 效率源科技",
+    "compression": "store",
+    "extends": null,
+    "files": [
+      "entry.js",
+      "dist"
+    ],
+    "directories": {
+      "output": "../out"
+    },
+    "asar": true,
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

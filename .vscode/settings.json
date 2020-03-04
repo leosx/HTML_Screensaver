@@ -1,0 +1,24 @@
+{
+    "search.exclude": {
+        "**/node_modules": true
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true,
+        "**/TestEffects": true,
+        "**/dist": true
+    },
+    "eslint.enable": true,
+    "eslint.validate": [
+        "javascript",
+        "html"
+    ],
+    "eslint.autoFixOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
+}

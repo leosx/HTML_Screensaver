@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "name": "Launch",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+            "windows": {
+                "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+            },
+            "env": {
+                "env_mode": "development"
+            },
+            "args": [
+                "."
+            ],
+            "program": "${workspaceFolder}/entry.js"
+        }
+    ]
+}
