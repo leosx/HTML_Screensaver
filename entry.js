@@ -109,8 +109,26 @@ function getConfigInfo() {
         encoding: 'utf8',
         flag: 'r'
     });
+    let jsonResult = JSON.parse(jsonStr);
+    jsonResult.ScreenEffects = [];
 
-    return JSON.parse(jsonStr);
+    let EffectFolder;
+    if (process.env.env_mode === "development") {
+        EffectFolder = path.join(__dirname, 'ScreenEffects');
+    } else {
+        EffectFolder = path.join(exeFolder, 'ScreenEffects');
+    }
+
+    let files = fs.readdirSync(EffectFolder);
+    files.forEach((item, index) => {
+        let folderPath = path.join(EffectFolder, item);
+        let stat = fs.statSync(folderPath);
+        if (stat.isDirectory()) {
+            jsonResult.ScreenEffects.push(path.join(item, 'index.html'));
+        }
+    });
+
+    return jsonResult;
 }
 
 /**
@@ -145,7 +163,7 @@ function fullScreenEffect(config) {
     mainWindow.setMaximumSize(width, height);
     let uri = '';
     if (typeof (config.Random) !== 'undefined' && config.Random == true) {
-        let tempindex = getRndInteger(0, config.ScreenEffects.length - 1);
+        let tempindex = getRndInteger(config.ScreenEffects.length);
         uri = getConfigEffect(config, tempindex);
     } else {
         uri = getConfigEffect(config, 0);
@@ -155,12 +173,11 @@ function fullScreenEffect(config) {
 }
 
 /**
- * 获取介于min和max之间的随机数。包含最大值和最小值
- * @param {Number} min 最小值
+ * 获取介于0和max之间的随机数。不包含最大值
  * @param {Number} max 最大值
  */
-function getRndInteger(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+function getRndInteger(max) {
+    return Math.floor(Math.random() * Math.floor(max));
 }
 
 /**
@@ -168,8 +185,9 @@ function getRndInteger(min, max) {
  */
 function singleEffect(config) {
     let displays = screen.getAllDisplays();
-    let tempWindow;
-    displays.forEach((display, index) => {
+    let tempWindow, display, historys = [];
+    for (let index = 0, count = displays.length; index < count; index++) {
+        display = displays[index];
         tempWindow = new BrowserWindow({
             width: display.bounds.width,
             height: display.bounds.height,
@@ -189,7 +207,13 @@ function singleEffect(config) {
         tempWindow.setMaximumSize(display.bounds.width, display.bounds.height);
         let uri = '';
         if (typeof (config.Random) !== 'undefined' && config.Random == true) {
-            let tempindex = getRndInteger(0, config.ScreenEffects.length - 1);
+            let tempindex = 0;
+            if (config.ScreenEffects.length >= displays.length) {
+                tempindex = getDiffrentRandomValue(config.ScreenEffects.length, historys);
+            } else {
+                tempindex = getRndInteger(config.ScreenEffects.length);
+            }
+
             uri = getConfigEffect(config, tempindex);
         } else {
             uri = getConfigEffect(config, index);
@@ -199,7 +223,22 @@ function singleEffect(config) {
         if (!mainWindow) {
             mainWindow = tempWindow;
         }
-    });
+    }
+}
+
+/**
+ * 获取0~maxLength之间的不重复随机数。
+ * @param {Number} maxLength 最大值
+ * @param {Array} history 历史记录数组
+ */
+function getDiffrentRandomValue(maxLength, history) {
+    let tempindex = getRndInteger(maxLength);
+    if (history.includes(tempindex)) {
+        return getDiffrentRandomValue(maxLength, history);
+    } else {
+        history.push(tempindex);
+        return tempindex;
+    }
 }
 
 /**
@@ -211,12 +250,12 @@ function getConfigEffect(config, index) {
     let uri = '';
     if (config.ScreenEffects && config.ScreenEffects.length > 0 && config.ScreenEffects.length > index && index >= 0) {
         let effectItem = config.ScreenEffects[index]
-        if (!effectItem || !effectItem.effect) {
+        if (!effectItem || !effectItem) {
             uri = "default";
         } else {
             uri = path.devjoin({
-                productArgs: [exeFolder, 'ScreenEffects', effectItem.effect],
-                devargs: [__dirname, 'ScreenEffects', effectItem.effect]
+                productArgs: [exeFolder, 'ScreenEffects', effectItem],
+                devargs: [__dirname, 'ScreenEffects', effectItem]
             });
         }
     } else {
@@ -267,10 +306,14 @@ async function creatMainWindow() {
         };
     }
 
-    if (typeof (config.MultipleDeviceFullScreen) !== "undefined" && config.MultipleDeviceFullScreen == true) {
-        fullScreenEffect(config);
-    } else {
-        singleEffect(config);
+    try {
+        if (typeof (config.MultipleDeviceFullScreen) !== "undefined" && config.MultipleDeviceFullScreen == true) {
+            fullScreenEffect(config);
+        } else {
+            singleEffect(config);
+        }
+    } catch (e) {
+        logger.error(`加载屏保特效失败：${e}`);
     }
 
     mainWindow.ELECTRON_DISABLE_SECURITY_WARNINGS = true;

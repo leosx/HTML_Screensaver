@@ -1,13 +1,4 @@
 {
     "MultipleDeviceFullScreen": false,
-    "Random": true,
-    "ScreenEffects": [{
-        "x": 0,
-        "y": 0,
-        "effect": "TimeCompass\\index.html"
-    }, {
-        "x": -1920,
-        "y": 0,
-        "effect": "particleSpiral\\index.html"
-    }]
+    "Random": true
 }
