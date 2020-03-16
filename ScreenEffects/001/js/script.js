@@ -1,21 +1,3 @@
-let particles = [];
-let frequency = 50;
-// Popolate particles
-setInterval(
-function () {
-  popolate();
-}.bind(this),
-frequency);
-
-
-
-let tela = document.createElement('canvas');
-tela.width = $(window).width();
-tela.height = $(window).height();
-$("body").append(tela);
-
-let canvas = tela.getContext('2d');
-
 class Particle {
   constructor(canvas, options) {
     let random = Math.random();
@@ -33,11 +15,12 @@ class Particle {
     setTimeout(function () {
       if (this.radius > 0.5) {
         particles.push(
-        new Particle(canvas, {
-          x: this.x,
-          y: this.y,
-          color: this.radius / 2 > 1 ? "#d6433b" : "#FFFFFF",
-          radius: this.radius / 2.2 }));
+          new Particle(canvas, {
+            x: this.x,
+            y: this.y,
+            color: this.radius / 2 > 1 ? "#d6433b" : "#FFFFFF",
+            radius: this.radius / 2.2
+          }));
 
 
       }
@@ -78,35 +61,57 @@ class Particle {
     }
     this.render();
     return true;
-  }}
-
-
-/*
-      * Function to clear layer canvas
-      * @num:number number of particles
-      */
-function popolate() {
-  particles.push(
-  new Particle(canvas, {
-    x: $(window).width() / 2,
-    y: $(window).height() / 2 }));
-
-
-  return particles.length;
+  }
 }
 
-function clear() {
-  canvas.globalAlpha = 0.04;
-  canvas.fillStyle = '#000042';
-  canvas.fillRect(0, 0, tela.width, tela.height);
-  canvas.globalAlpha = 1;
-}
+window.onload = function () {
+  let particles = [];
+  let frequency = 50;
+  // Popolate particles
+  setInterval(
+    function () {
+      popolate();
+    }.bind(this),
+    frequency);
 
-function update() {
-  particles = particles.filter(function (p) {
-    return p.move();
-  });
-  clear();
-  requestAnimationFrame(update.bind(this));
-}
-update();
+
+
+  let tela = document.createElement('canvas');
+  tela.width = $(window).width();
+  tela.height = $(window).height();
+  $("body").append(tela);
+
+  let canvas = tela.getContext('2d');
+
+
+  /*
+   * Function to clear layer canvas
+   * @num:number number of particles
+   */
+  function popolate() {
+    particles.push(
+      new Particle(canvas, {
+        x: $(window).width() / 2,
+        y: $(window).height() / 2
+      }));
+
+
+    return particles.length;
+  }
+
+  function clear() {
+    canvas.globalAlpha = 0.04;
+    canvas.fillStyle = '#000042';
+    canvas.fillRect(0, 0, tela.width, tela.height);
+    canvas.globalAlpha = 1;
+  }
+
+  function update() {
+    particles = particles.filter(function (p) {
+      return p.move();
+    });
+    clear();
+    requestAnimationFrame(update.bind(this));
+  }
+  update();
+};

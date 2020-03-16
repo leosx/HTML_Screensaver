@@ -15,8 +15,11 @@ let exeFolder = path.dirname(exeFullPath);
 log4js.configure({
     appenders: {
         cheese: {
-            type: 'file',
-            filename: 'cheese.log'
+            type: 'dateFile',
+            filename: 'screenLog',
+            pattern: 'yyyy-MM-dd.log',
+            alwaysIncludePattern: true,
+            daysToKeep: 7
         }
     },
     categories: {
@@ -161,6 +164,9 @@ function fullScreenEffect(config) {
     // mainWindow.webContents.openDevTools();
     mainWindow.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
     mainWindow.setMaximumSize(width, height);
+    mainWindow.webContents.on('console-message', (event, level, message, line, sourceID) => {
+        logger.error(`全屏 -- 窗体Console消息：${message} ,code Line: ${line}`);
+    });
     let uri = '';
     if (typeof (config.Random) !== 'undefined' && config.Random == true) {
         let tempindex = getRndInteger(config.ScreenEffects.length);
@@ -220,6 +226,9 @@ function singleEffect(config) {
         }
 
         tempWindow.loadURL(uri);
+        tempWindow.webContents.on('console-message', (event, level, message, line, sourceID) => {
+            logger.error(`单屏 -- 窗体Console消息：${message} ,code Line: ${line} in ${sourceID}`);
+        });
         if (!mainWindow) {
             mainWindow = tempWindow;
         }
