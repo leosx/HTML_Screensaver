@@ -2,8 +2,10 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>H5全屏抽象粒子背景特效 - 站长素材</title>
+<title>H5全屏抽象粒子背景特效</title>
 
+<!-- Insert this line above script imports 。解决Electron中找不到Jquery问题  -->
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 <script type="text/javascript" src="js/jquery.min.js"></script>
 
 <link type="text/css" href="css/style.css" rel="stylesheet" />
@@ -11,5 +13,8 @@
 </head>
 <body>
 <script type="text/javascript" src="js/script.js"></script>
+
+<!-- Insert this line after script imports 。 解决Electron中找不到Jquery问题-->
+<script>if (window.module) module = window.module;</script>
 </body>
 </html>

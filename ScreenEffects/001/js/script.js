@@ -14,7 +14,7 @@ class Particle {
 
     setTimeout(function () {
       if (this.radius > 0.5) {
-        particles.push(
+        window.particles.push(
           new Particle(canvas, {
             x: this.x,
             y: this.y,
@@ -64,15 +64,10 @@ class Particle {
   }
 }
 
-window.onload = function () {
-  let particles = [];
+$(document).ready(() => {
+  window.particles = [];
   let frequency = 50;
-  // Popolate particles
-  setInterval(
-    function () {
-      popolate();
-    }.bind(this),
-    frequency);
+ 
 
 
 
@@ -89,15 +84,22 @@ window.onload = function () {
    * @num:number number of particles
    */
   function popolate() {
-    particles.push(
+    window.particles.push(
       new Particle(canvas, {
         x: $(window).width() / 2,
         y: $(window).height() / 2
       }));
 
 
-    return particles.length;
+    return window.particles.length;
   }
+  
+   // Popolate particles
+  setInterval(
+    function () {
+      popolate();
+    }.bind(this),
+    frequency);
 
   function clear() {
     canvas.globalAlpha = 0.04;
@@ -107,11 +109,11 @@ window.onload = function () {
   }
 
   function update() {
-    particles = particles.filter(function (p) {
+    window.particles = window.particles.filter(function (p) {
       return p.move();
     });
     clear();
     requestAnimationFrame(update.bind(this));
   }
   update();
-};
+});
