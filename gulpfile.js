@@ -6,6 +6,7 @@ const {
     parallel
 } = require('gulp');
 const fs = require('fs');
+const childProcess = require('child_process');
 const path = require('path');
 
 function clearTask() {
@@ -77,6 +78,19 @@ function copyEffects() {
 }
 
 /**
+ * Windows程序申请Administrator权限。
+ */
+function administrator() {
+    return new Promise(async solve => {
+        let cmdStr = `.\\tools\\mt.exe -manifest .\\tools\\windowsAdminRequest.xml -outputresource:${path.join('..', 'out', "win-unpacked", "HTML屏保")}.exe`;
+
+        childProcess.execSync(cmdStr);
+
+        solve();
+    });
+}
+
+/**
  * 重命名应用程序后缀名称为.scr
  */
 function renameExe() {
@@ -92,4 +106,4 @@ function renameExe() {
     });
 }
 
-module.exports.default = series(clearTask, parallel(copyFiles, copyEntryjs), electronPackage, copyConfig, copyDefaultEffect, copyEffects, renameExe);
+module.exports.default = series(clearTask, parallel(copyFiles, copyEntryjs), electronPackage, copyConfig, copyDefaultEffect, copyEffects, administrator, renameExe);
